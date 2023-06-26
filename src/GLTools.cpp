@@ -8,28 +8,28 @@
 /* Copyright (c) 2005-2010, Richard S. Wright Jr.
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-Redistributions of source code must retain the above copyright notice, this list 
+Redistributions of source code must retain the above copyright notice, this list
 of conditions and the following disclaimer.
 
-Redistributions in binary form must reproduce the above copyright notice, this list 
-of conditions and the following disclaimer in the documentation and/or other 
+Redistributions in binary form must reproduce the above copyright notice, this list
+of conditions and the following disclaimer in the documentation and/or other
 materials provided with the distribution.
 
-Neither the name of Richard S. Wright Jr. nor the names of other contributors may be used 
-to endorse or promote products derived from this software without specific prior 
+Neither the name of Richard S. Wright Jr. nor the names of other contributors may be used
+to endorse or promote products derived from this software without specific prior
 written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
-SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED 
-TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR 
-BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
@@ -41,7 +41,7 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 #include <stdarg.h>
 
 #ifdef linux
-#include <cstdlib> 
+#include <cstdlib>
 #endif
 #ifdef __APPLE__
 #include <unistd.h>
@@ -51,7 +51,7 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 // Get the OpenGL version number
 void gltGetOpenGLVersion(GLint &nMajor, GLint &nMinor)
 	{
-    #ifndef OPENGL_ES       
+    #ifndef OPENGL_ES
     glGetIntegerv(GL_MAJOR_VERSION, &nMajor);
     glGetIntegerv(GL_MINOR_VERSION, &nMinor);
     #else
@@ -62,10 +62,10 @@ void gltGetOpenGLVersion(GLint &nMajor, GLint &nMinor)
         nMinor = 0;
         return;
         }
-    
+
     // Get major version number. This stops at the first non numeric character
     nMajor = atoi(szVersionString);
-    
+
     // Get minor version number. Start past the first ".", atoi terminates on first non numeric char.
     nMinor = atoi(strstr(szVersionString, ".")+1);
 	#endif
@@ -76,10 +76,10 @@ void gltGetOpenGLVersion(GLint &nMajor, GLint &nMinor)
 // Returns 1 or 0
 int gltIsExtSupported(const char *extension)
 	{
-    #ifndef OPENGL_ES       
+    #ifndef OPENGL_ES
     GLint nNumExtensions;
     glGetIntegerv(GL_NUM_EXTENSIONS, &nNumExtensions);
-    
+
     for(GLint i = 0; i < nNumExtensions; i++)
         if(strcmp(extension, (const char *)glGetStringi(GL_EXTENSIONS, i)) == 0)
            return 1;
@@ -87,26 +87,26 @@ int gltIsExtSupported(const char *extension)
         GLubyte *extensions = NULL;
         const GLubyte *start;
         GLubyte *where, *terminator;
-        
+
         where = (GLubyte *) strchr(extension, ' ');
         if (where || *extension == '\0')
             return 0;
-        
+
         extensions = (GLubyte *)glGetString(GL_EXTENSIONS);
-        
+
         start = extensions;
-        for (;;) 
+        for (;;)
 		{
             where = (GLubyte *) strstr((const char *) start, extension);
-            
+
             if (!where)
                 break;
-            
+
             terminator = where + strlen(extension);
-            
-            if (where == start || *(where - 1) == ' ') 
+
+            if (where == start || *(where - 1) == ' ')
 			{
-                if (*terminator == ' ' || *terminator == '\0') 
+                if (*terminator == ' ' || *terminator == '\0')
                     return 1;
 			}
             start = terminator;
@@ -116,31 +116,31 @@ int gltIsExtSupported(const char *extension)
 	}
 
 /////////////////////////////////////////////////////////////////////////////////
-// No-op on anything other than the Mac, sets the working directory to 
+// No-op on anything other than the Mac, sets the working directory to
 // the /Resources folder
 void gltSetWorkingDirectory(const char *szArgv)
 	{
 	#ifdef __APPLE__
-	static char szParentDirectory[255];   	
+	static char szParentDirectory[255];
 
-	///////////////////////////////////////////////////////////////////////////   
+	///////////////////////////////////////////////////////////////////////////
 	// Get the directory where the .exe resides
 	char *c;
 	strncpy( szParentDirectory, szArgv, sizeof(szParentDirectory) );
 	szParentDirectory[254] = '\0'; // Make sure we are NULL terminated
-	
+
 	c = (char*) szParentDirectory;
 
-	while (*c != '\0')     // go to end 
+	while (*c != '\0')     // go to end
 	c++;
 
-	while (*c != '/')      // back up to parent 
+	while (*c != '/')      // back up to parent
 	c--;
 
-	*c++ = '\0';           // cut off last part (binary name) 
+	*c++ = '\0';           // cut off last part (binary name)
 
-	///////////////////////////////////////////////////////////////////////////   
-	// Change to Resources directory. Any data files need to be placed there 
+	///////////////////////////////////////////////////////////////////////////
+	// Change to Resources directory. Any data files need to be placed there
 	chdir(szParentDirectory);
 #ifndef OPENGL_ES
 	chdir("../Resources");
@@ -155,9 +155,9 @@ void gltMakeTorus(GLTriangleBatch& torusBatch, GLfloat majorRadius, GLfloat mino
     double majorStep = 2.0f*M3D_PI / numMajor;
     double minorStep = 2.0f*M3D_PI / numMinor;
     int i, j;
-	
+
     torusBatch.BeginMesh(numMajor * (numMinor+1) * 6);
-    for (i=0; i<numMajor; ++i) 
+    for (i=0; i<numMajor; ++i)
 		{
 		double a0 = i * majorStep;
 		double a1 = a0 + majorStep;
@@ -169,14 +169,14 @@ void gltMakeTorus(GLTriangleBatch& torusBatch, GLfloat majorRadius, GLfloat mino
 		M3DVector3f vVertex[4];
 		M3DVector3f vNormal[4];
 		M3DVector2f vTexture[4];
-		
-		for (j=0; j<=numMinor; ++j) 
+
+		for (j=0; j<=numMinor; ++j)
 			{
 			double b = j * minorStep;
 			GLfloat c = (GLfloat) cos(b);
 			GLfloat r = minorRadius * c + majorRadius;
 			GLfloat z = minorRadius * (GLfloat) sin(b);
-			
+
 			// First point
 			vTexture[0][0] = (float)(i)/(float)(numMajor);
 			vTexture[0][1] = (float)(j)/(float)(numMinor);
@@ -187,7 +187,7 @@ void gltMakeTorus(GLTriangleBatch& torusBatch, GLfloat majorRadius, GLfloat mino
 			vVertex[0][0] = x0 * r;
 			vVertex[0][1] = y0 * r;
 			vVertex[0][2] = z;
-			
+
 			// Second point
 			vTexture[1][0] = (float)(i+1)/(float)(numMajor);
 			vTexture[1][1] = (float)(j)/(float)(numMinor);
@@ -204,7 +204,7 @@ void gltMakeTorus(GLTriangleBatch& torusBatch, GLfloat majorRadius, GLfloat mino
 			c = (GLfloat) cos(b);
 			r = minorRadius * c + majorRadius;
 			z = minorRadius * (GLfloat) sin(b);
-						
+
 			// Third (based on first)
 			vTexture[2][0] = (float)(i)/(float)(numMajor);
 			vTexture[2][1] = (float)(j+1)/(float)(numMinor);
@@ -215,7 +215,7 @@ void gltMakeTorus(GLTriangleBatch& torusBatch, GLfloat majorRadius, GLfloat mino
 			vVertex[2][0] = x0 * r;
 			vVertex[2][1] = y0 * r;
 			vVertex[2][2] = z;
-			
+
 			// Fourth (based on second)
 			vTexture[3][0] = (float)(i+1)/(float)(numMajor);
 			vTexture[3][1] = (float)(j+1)/(float)(numMinor);
@@ -227,18 +227,18 @@ void gltMakeTorus(GLTriangleBatch& torusBatch, GLfloat majorRadius, GLfloat mino
 			vVertex[3][1] = y1*r;
 			vVertex[3][2] = z;
 
-			torusBatch.AddTriangle(vVertex, vNormal, vTexture);			
-			
+			torusBatch.AddTriangle(vVertex, vNormal, vTexture);
+
 			// Rearrange for next triangle
 			memcpy(vVertex[0], vVertex[1], sizeof(M3DVector3f));
 			memcpy(vNormal[0], vNormal[1], sizeof(M3DVector3f));
 			memcpy(vTexture[0], vTexture[1], sizeof(M3DVector2f));
-			
+
 			memcpy(vVertex[1], vVertex[3], sizeof(M3DVector3f));
 			memcpy(vNormal[1], vNormal[3], sizeof(M3DVector3f));
 			memcpy(vTexture[1], vTexture[3], sizeof(M3DVector2f));
-					
-			torusBatch.AddTriangle(vVertex, vNormal, vTexture);			
+
+			torusBatch.AddTriangle(vVertex, vNormal, vTexture);
 			}
 		}
 	torusBatch.End();
@@ -252,37 +252,37 @@ void gltMakeSphere(GLTriangleBatch& sphereBatch, GLfloat fRadius, GLint iSlices,
     GLfloat dtheta = 2.0f * (GLfloat)(3.141592653589) / (GLfloat) iSlices;
 	GLfloat ds = 1.0f / (GLfloat) iSlices;
 	GLfloat dt = 1.0f / (GLfloat) iStacks;
-	GLfloat t = 1.0f;	
+	GLfloat t = 1.0f;
 	GLfloat s = 0.0f;
     GLint i, j;     // Looping variables
-    
+
     sphereBatch.BeginMesh(iSlices * iStacks * 6);
-	for (i = 0; i < iStacks; i++) 
+	for (i = 0; i < iStacks; i++)
 		{
 		GLfloat rho = (GLfloat)i * drho;
 		GLfloat srho = (GLfloat)(sin(rho));
 		GLfloat crho = (GLfloat)(cos(rho));
 		GLfloat srhodrho = (GLfloat)(sin(rho + drho));
 		GLfloat crhodrho = (GLfloat)(cos(rho + drho));
-		
+
         // Many sources of OpenGL sphere drawing code uses a triangle fan
-        // for the caps of the sphere. This however introduces texturing 
+        // for the caps of the sphere. This however introduces texturing
         // artifacts at the poles on some OpenGL implementations
         s = 0.0f;
 		M3DVector3f vVertex[4];
 		M3DVector3f vNormal[4];
 		M3DVector2f vTexture[4];
 
-		for ( j = 0; j < iSlices; j++) 
+		for ( j = 0; j < iSlices; j++)
 			{
 			GLfloat theta = (j == iSlices) ? 0.0f : j * dtheta;
 			GLfloat stheta = (GLfloat)(-sin(theta));
 			GLfloat ctheta = (GLfloat)(cos(theta));
-			
+
 			GLfloat x = stheta * srho;
 			GLfloat y = ctheta * srho;
 			GLfloat z = crho;
-        
+
 			vTexture[0][0] = s;
 			vTexture[0][1] = t;
 			vNormal[0][0] = x;
@@ -291,7 +291,7 @@ void gltMakeSphere(GLTriangleBatch& sphereBatch, GLfloat fRadius, GLint iSlices,
 			vVertex[0][0] = x * fRadius;
 			vVertex[0][1] = y * fRadius;
 			vVertex[0][2] = z * fRadius;
-			
+
             x = stheta * srhodrho;
 			y = ctheta * srhodrho;
 			z = crhodrho;
@@ -304,16 +304,16 @@ void gltMakeSphere(GLTriangleBatch& sphereBatch, GLfloat fRadius, GLint iSlices,
 			vVertex[1][0] = x * fRadius;
 			vVertex[1][1] = y * fRadius;
 			vVertex[1][2] = z * fRadius;
-			
+
 
 			theta = ((j+1) == iSlices) ? 0.0f : (j+1) * dtheta;
 			stheta = (GLfloat)(-sin(theta));
 			ctheta = (GLfloat)(cos(theta));
-			
+
 			x = stheta * srho;
 			y = ctheta * srho;
 			z = crho;
-        
+
             s += ds;
 			vTexture[2][0] = s;
 			vTexture[2][1] = t;
@@ -323,7 +323,7 @@ void gltMakeSphere(GLTriangleBatch& sphereBatch, GLfloat fRadius, GLint iSlices,
 			vVertex[2][0] = x * fRadius;
 			vVertex[2][1] = y * fRadius;
 			vVertex[2][2] = z * fRadius;
-			
+
             x = stheta * srhodrho;
 			y = ctheta * srhodrho;
 			z = crhodrho;
@@ -336,25 +336,25 @@ void gltMakeSphere(GLTriangleBatch& sphereBatch, GLfloat fRadius, GLint iSlices,
 			vVertex[3][0] = x * fRadius;
 			vVertex[3][1] = y * fRadius;
 			vVertex[3][2] = z * fRadius;
-		
-			sphereBatch.AddTriangle(vVertex, vNormal, vTexture);			
-			
+
+			sphereBatch.AddTriangle(vVertex, vNormal, vTexture);
+
 			// Rearrange for next triangle
 			memcpy(vVertex[0], vVertex[1], sizeof(M3DVector3f));
 			memcpy(vNormal[0], vNormal[1], sizeof(M3DVector3f));
 			memcpy(vTexture[0], vTexture[1], sizeof(M3DVector2f));
-			
+
 			memcpy(vVertex[1], vVertex[3], sizeof(M3DVector3f));
 			memcpy(vNormal[1], vNormal[3], sizeof(M3DVector3f));
 			memcpy(vTexture[1], vTexture[3], sizeof(M3DVector2f));
-					
-			sphereBatch.AddTriangle(vVertex, vNormal, vTexture);			
+
+			sphereBatch.AddTriangle(vVertex, vNormal, vTexture);
 			}
         t -= dt;
         }
 		sphereBatch.End();
     }
-    
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void gltMakeDisk(GLTriangleBatch& diskBatch, GLfloat innerRadius, GLfloat outerRadius, GLint nSlices, GLint nStacks)
@@ -365,17 +365,17 @@ void gltMakeDisk(GLTriangleBatch& diskBatch, GLfloat innerRadius, GLfloat outerR
 		fStepSizeRadial *= -1.0f;
 
 	fStepSizeRadial /= float(nStacks);
-	
+
 	GLfloat fStepSizeSlice = (3.1415926536f * 2.0f) / float(nSlices);
-	
+
 	diskBatch.BeginMesh(nSlices * nStacks * 6);
-	
+
 	M3DVector3f vVertex[4];
 	M3DVector3f vNormal[4];
 	M3DVector2f vTexture[4];
-	
+
 	float fRadialScale = 1.0f / outerRadius;
-	
+
 	for(GLint i = 0; i < nStacks; i++)			// Stacks
 		{
 		float theyta;
@@ -384,84 +384,84 @@ void gltMakeDisk(GLTriangleBatch& diskBatch, GLfloat innerRadius, GLfloat outerR
 			{
 			float inner = innerRadius + (float(i)) * fStepSizeRadial;
 			float outer = innerRadius + (float(i+1)) * fStepSizeRadial;
-			
+
 			theyta = fStepSizeSlice * float(j);
 			if(j == (nSlices - 1))
 				theytaNext = 0.0f;
 			else
 				theytaNext = fStepSizeSlice * (float(j+1));
-				
+
 			// Inner First
-			vVertex[0][0] = cos(theyta) * inner;	// X	
+			vVertex[0][0] = cos(theyta) * inner;	// X
 			vVertex[0][1] = sin(theyta) * inner;	// Y
 			vVertex[0][2] = 0.0f;					// Z
-			
+
 			vNormal[0][0] = 0.0f;					// Surface Normal, same for everybody
 			vNormal[0][1] = 0.0f;
 			vNormal[0][2] = 1.0f;
-			
-			vTexture[0][0] = ((vVertex[0][0] * fRadialScale) + 1.0f) * 0.5f;	
+
+			vTexture[0][0] = ((vVertex[0][0] * fRadialScale) + 1.0f) * 0.5f;
 			vTexture[0][1] = ((vVertex[0][1] * fRadialScale) + 1.0f) * 0.5f;
-			
+
 			// Outer First
-			vVertex[1][0] = cos(theyta) * outer;	// X	
+			vVertex[1][0] = cos(theyta) * outer;	// X
 			vVertex[1][1] = sin(theyta) * outer;	// Y
 			vVertex[1][2] = 0.0f;					// Z
-			
+
 			vNormal[1][0] = 0.0f;					// Surface Normal, same for everybody
 			vNormal[1][1] = 0.0f;
 			vNormal[1][2] = 1.0f;
-			
+
 			vTexture[1][0] = ((vVertex[1][0] * fRadialScale) + 1.0f) * 0.5f;
 			vTexture[1][1] = ((vVertex[1][1] * fRadialScale) + 1.0f) * 0.5f;
-			
+
 			// Inner Second
-			vVertex[2][0] = cos(theytaNext) * inner;	// X	
+			vVertex[2][0] = cos(theytaNext) * inner;	// X
 			vVertex[2][1] = sin(theytaNext) * inner;	// Y
 			vVertex[2][2] = 0.0f;					// Z
-			
+
 			vNormal[2][0] = 0.0f;					// Surface Normal, same for everybody
 			vNormal[2][1] = 0.0f;
 			vNormal[2][2] = 1.0f;
-			
+
 			vTexture[2][0] = ((vVertex[2][0] * fRadialScale) + 1.0f) * 0.5f;
 			vTexture[2][1] = ((vVertex[2][1] * fRadialScale) + 1.0f) * 0.5f;
-			
-			
+
+
 			// Outer Second
-			vVertex[3][0] = cos(theytaNext) * outer;	// X	
+			vVertex[3][0] = cos(theytaNext) * outer;	// X
 			vVertex[3][1] = sin(theytaNext) * outer;	// Y
 			vVertex[3][2] = 0.0f;					// Z
-			
+
 			vNormal[3][0] = 0.0f;					// Surface Normal, same for everybody
 			vNormal[3][1] = 0.0f;
 			vNormal[3][2] = 1.0f;
-			
+
 			vTexture[3][0] = ((vVertex[3][0] * fRadialScale) + 1.0f) * 0.5f;
 			vTexture[3][1] = ((vVertex[3][1] * fRadialScale) + 1.0f) * 0.5f;
-			
-			diskBatch.AddTriangle(vVertex, vNormal, vTexture);			
-			
+
+			diskBatch.AddTriangle(vVertex, vNormal, vTexture);
+
 			// Rearrange for next triangle
 			memcpy(vVertex[0], vVertex[1], sizeof(M3DVector3f));
 			memcpy(vNormal[0], vNormal[1], sizeof(M3DVector3f));
 			memcpy(vTexture[0], vTexture[1], sizeof(M3DVector2f));
-			
+
 			memcpy(vVertex[1], vVertex[3], sizeof(M3DVector3f));
 			memcpy(vNormal[1], vNormal[3], sizeof(M3DVector3f));
 			memcpy(vTexture[1], vTexture[3], sizeof(M3DVector2f));
-					
-			diskBatch.AddTriangle(vVertex, vNormal, vTexture);			
+
+			diskBatch.AddTriangle(vVertex, vNormal, vTexture);
 			}
 		}
-	
+
 	diskBatch.End();
 	}
 
 // Draw a cylinder. Much like gluCylinder
-void gltMakeCylinder(GLTriangleBatch& cylinderBatch, GLfloat baseRadius, GLfloat topRadius, 
+void gltMakeCylinder(GLTriangleBatch& cylinderBatch, GLfloat baseRadius, GLfloat topRadius,
 			GLfloat fLength, GLint numSlices, GLint numStacks)
-	{	
+	{
     float fRadiusStep = (topRadius - baseRadius) / float(numStacks);
 
 	GLfloat fStepSizeSlice = (3.1415926536f * 2.0f) / float(numSlices);
@@ -477,9 +477,9 @@ void gltMakeCylinder(GLTriangleBatch& cylinderBatch, GLfloat baseRadius, GLfloat
 	GLfloat s;
 	GLfloat t;
 
-	for (int i = 0; i < numStacks; i++) 
+	for (int i = 0; i < numStacks; i++)
 		{
-		if(i == 0)			
+		if(i == 0)
 			t = 0.0f;
 		else
 			t = float(i) * dt;
@@ -489,24 +489,24 @@ void gltMakeCylinder(GLTriangleBatch& cylinderBatch, GLfloat baseRadius, GLfloat
 			tNext = 1.0f;
 		else
 			tNext = float(i+1) * dt;
-	
+
 		float fCurrentRadius = baseRadius + (fRadiusStep * float(i));
 		float fNextRadius = baseRadius + (fRadiusStep * float(i+1));
 		float theyta;
 		float theytaNext;
 
-		float fCurrentZ = float(i) * (fLength / float(numStacks)); 
+		float fCurrentZ = float(i) * (fLength / float(numStacks));
 		float fNextZ = float(i+1) * (fLength / float(numStacks));
-		
+
 		float zNormal = 0.0f;
 		if(!m3dCloseEnough(baseRadius - topRadius, 0.0f, 0.00001f))
 			{
 			// Rise over run...
 			zNormal = (baseRadius - topRadius);
 			}
-		
-		for (int j = 0; j < numSlices; j++) 
-			{		
+
+		for (int j = 0; j < numSlices; j++)
+			{
 			if(j == 0)
 				s = 0.0f;
 			else
@@ -523,25 +523,25 @@ void gltMakeCylinder(GLTriangleBatch& cylinderBatch, GLfloat baseRadius, GLfloat
 				theytaNext = 0.0f;
 			else
 				theytaNext = fStepSizeSlice * (float(j+1));
-				
+
 			// Inner First
-			vVertex[1][0] = cos(theyta) * fCurrentRadius;	// X	
+			vVertex[1][0] = cos(theyta) * fCurrentRadius;	// X
 			vVertex[1][1] = sin(theyta) * fCurrentRadius;	// Y
 			vVertex[1][2] = fCurrentZ;						// Z
-			
+
 			vNormal[1][0] = vVertex[1][0];					// Surface Normal, same for everybody
 			vNormal[1][1] = vVertex[1][1];
 			vNormal[1][2] = zNormal;
 			m3dNormalizeVector3(vNormal[1]);
-			
+
 			vTexture[1][0] = s;					// Texture Coordinates, I have no idea...
 			vTexture[1][1] = t;
-	
+
 			// Outer First
-			vVertex[0][0] = cos(theyta) * fNextRadius;	// X	
+			vVertex[0][0] = cos(theyta) * fNextRadius;	// X
 			vVertex[0][1] = sin(theyta) * fNextRadius;	// Y
 			vVertex[0][2] = fNextZ;						// Z
-			
+
 			if(!m3dCloseEnough(fNextRadius, 0.0f, 0.00001f)) {
 				vNormal[0][0] = vVertex[0][0];					// Surface Normal, same for everybody
 				vNormal[0][1] = vVertex[0][1];					// For cones, tip is tricky
@@ -550,16 +550,16 @@ void gltMakeCylinder(GLTriangleBatch& cylinderBatch, GLfloat baseRadius, GLfloat
 				}
 			else
 				memcpy(vNormal[0], vNormal[1], sizeof(M3DVector3f));
-		
-			
+
+
 			vTexture[0][0] = s;					// Texture Coordinates, I have no idea...
 			vTexture[0][1] = tNext;
-			
+
 			// Inner second
-			vVertex[3][0] = cos(theytaNext) * fCurrentRadius;	// X	
+			vVertex[3][0] = cos(theytaNext) * fCurrentRadius;	// X
 			vVertex[3][1] = sin(theytaNext) * fCurrentRadius;	// Y
 			vVertex[3][2] = fCurrentZ;						// Z
-			
+
 			vNormal[3][0] = vVertex[3][0];					// Surface Normal, same for everybody
 			vNormal[3][1] = vVertex[3][1];
 			vNormal[3][2] = zNormal;
@@ -569,10 +569,10 @@ void gltMakeCylinder(GLTriangleBatch& cylinderBatch, GLfloat baseRadius, GLfloat
 			vTexture[3][1] = t;
 
 			// Outer second
-			vVertex[2][0] = cos(theytaNext) * fNextRadius;	// X	
+			vVertex[2][0] = cos(theytaNext) * fNextRadius;	// X
 			vVertex[2][1] = sin(theytaNext) * fNextRadius;	// Y
 			vVertex[2][2] = fNextZ;						// Z
-			
+
 			if(!m3dCloseEnough(fNextRadius, 0.0f, 0.00001f)) {
 				vNormal[2][0] = vVertex[2][0];					// Surface Normal, same for everybody
 				vNormal[2][1] = vVertex[2][1];
@@ -581,191 +581,191 @@ void gltMakeCylinder(GLTriangleBatch& cylinderBatch, GLfloat baseRadius, GLfloat
 				}
 			else
 				memcpy(vNormal[2], vNormal[3], sizeof(M3DVector3f));
-				
+
 
 			vTexture[2][0] = sNext;					// Texture Coordinates, I have no idea...
 			vTexture[2][1] = tNext;
-		
-			cylinderBatch.AddTriangle(vVertex, vNormal, vTexture);			
-			
+
+			cylinderBatch.AddTriangle(vVertex, vNormal, vTexture);
+
 			// Rearrange for next triangle
 			memcpy(vVertex[0], vVertex[1], sizeof(M3DVector3f));
 			memcpy(vNormal[0], vNormal[1], sizeof(M3DVector3f));
 			memcpy(vTexture[0], vTexture[1], sizeof(M3DVector2f));
-			
+
 			memcpy(vVertex[1], vVertex[3], sizeof(M3DVector3f));
 			memcpy(vNormal[1], vNormal[3], sizeof(M3DVector3f));
 			memcpy(vTexture[1], vTexture[3], sizeof(M3DVector2f));
-					
-			cylinderBatch.AddTriangle(vVertex, vNormal, vTexture);			
+
+			cylinderBatch.AddTriangle(vVertex, vNormal, vTexture);
 			}
         }
 	cylinderBatch.End();
 	}
-	
-	
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 // Make a cube, centered at the origin, and with a specified "radius"
 void gltMakeCube(GLBatch& cubeBatch, GLfloat fRadius )
     {
     cubeBatch.Begin(GL_TRIANGLES, 36, 1);
-            
+
     /////////////////////////////////////////////
     // Top of cube
     cubeBatch.Normal3f(0.0f, 1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
     cubeBatch.Vertex3f(fRadius, fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 0.0f);
     cubeBatch.Vertex3f(fRadius, fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
     cubeBatch.Vertex3f(-fRadius, fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
     cubeBatch.Vertex3f(fRadius, fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
     cubeBatch.Vertex3f(-fRadius, fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 1.0f);
     cubeBatch.Vertex3f(-fRadius, fRadius, fRadius);
-    
-    
+
+
     ////////////////////////////////////////////
     // Bottom of cube
     cubeBatch.Normal3f(0.0f, -1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
     cubeBatch.Vertex3f(-fRadius, -fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, -1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 0.0f);
     cubeBatch.Vertex3f(fRadius, -fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, -1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
     cubeBatch.Vertex3f(fRadius, -fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, -1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 1.0f);
     cubeBatch.Vertex3f(-fRadius, -fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, -1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
     cubeBatch.Vertex3f(-fRadius, -fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, -1.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
     cubeBatch.Vertex3f(fRadius, -fRadius, fRadius);
-    
+
     ///////////////////////////////////////////
     // Left side of cube
     cubeBatch.Normal3f(-1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
     cubeBatch.Vertex3f(-fRadius, fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(-1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 0.0f);
     cubeBatch.Vertex3f(-fRadius, fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(-1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
     cubeBatch.Vertex3f(-fRadius, -fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(-1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
     cubeBatch.Vertex3f(-fRadius, fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(-1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
     cubeBatch.Vertex3f(-fRadius, -fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(-1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 1.0f);
     cubeBatch.Vertex3f(-fRadius, -fRadius, fRadius);
-    
+
     // Right side of cube
     cubeBatch.Normal3f(1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
     cubeBatch.Vertex3f(fRadius, -fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 0.0f);
     cubeBatch.Vertex3f(fRadius, fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
     cubeBatch.Vertex3f(fRadius, fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
     cubeBatch.Vertex3f(fRadius, fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 1.0f);
     cubeBatch.Vertex3f(fRadius, -fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(1.0f, 0.0f, 0.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
     cubeBatch.Vertex3f(fRadius, -fRadius, -fRadius);
-    
+
     // Front and Back
     // Front
     cubeBatch.Normal3f(0.0f, 0.0f, 1.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 0.0f);
     cubeBatch.Vertex3f(fRadius, -fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 0.0f, 1.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
     cubeBatch.Vertex3f(fRadius, fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 0.0f, 1.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 1.0f);
     cubeBatch.Vertex3f(-fRadius, fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 0.0f, 1.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 1.0f);
     cubeBatch.Vertex3f(-fRadius, fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 0.0f, 1.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
     cubeBatch.Vertex3f(-fRadius, -fRadius, fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 0.0f, 1.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 0.0f);
     cubeBatch.Vertex3f(fRadius, -fRadius, fRadius);
-    
+
     // Back
     cubeBatch.Normal3f(0.0f, 0.0f, -1.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 0.0f);
     cubeBatch.Vertex3f(fRadius, -fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 0.0f, -1.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
     cubeBatch.Vertex3f(-fRadius, -fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 0.0f, -1.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 1.0f);
     cubeBatch.Vertex3f(-fRadius, fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 0.0f, -1.0f);
     cubeBatch.MultiTexCoord2f(0, 0.0f, 1.0f);
     cubeBatch.Vertex3f(-fRadius, fRadius, -fRadius);
-    
+
     cubeBatch.Normal3f(0.0f, 0.0f, -1.0f);
     cubeBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
     cubeBatch.Vertex3f(fRadius, fRadius, -fRadius);
 
 	cubeBatch.Normal3f(0.0f, 0.0f, -1.0f);
 	cubeBatch.MultiTexCoord2f(0, 1.0f, 0.0f);
-	cubeBatch.Vertex3f(fRadius, -fRadius, -fRadius);   
+	cubeBatch.Vertex3f(fRadius, -fRadius, -fRadius);
     cubeBatch.End();
-	}	
+	}
 
 
 
@@ -804,24 +804,24 @@ GLint gltGrabScreenTGA(const char *szFileName)
     GLbyte	*pBits = NULL;      // Pointer to bits
     GLint iViewport[4];         // Viewport in pixels
     GLenum lastBuffer;          // Storage for the current read buffer setting
-    
+
 	// Get the viewport dimensions
 	glGetIntegerv(GL_VIEWPORT, iViewport);
-	
+
     // How big is the image going to be (targas are tightly packed)
-	lImageSize = iViewport[2] * 3 * iViewport[3];	
-	
+	lImageSize = iViewport[2] * 3 * iViewport[3];
+
     // Allocate block. If this doesn't work, go home
     pBits = (GLbyte *)malloc(lImageSize);
     if(pBits == NULL)
         return 0;
-	
+
     // Read bits from color buffer
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glPixelStorei(GL_PACK_ROW_LENGTH, 0);
 	glPixelStorei(GL_PACK_SKIP_ROWS, 0);
 	glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-    
+
     // Get the current read buffer setting and save it. Switch to
     // the front buffer and do the read operation. Finally, restore
     // the read buffer state
@@ -829,7 +829,7 @@ GLint gltGrabScreenTGA(const char *szFileName)
     glReadBuffer(GL_FRONT);
     glReadPixels(0, 0, iViewport[2], iViewport[3], GL_BGR_EXT, GL_UNSIGNED_BYTE, pBits);
     glReadBuffer(lastBuffer);
-    
+
     // Initialize the Targa header
     tgaHeader.identsize = 0;
     tgaHeader.colorMapType = 0;
@@ -843,7 +843,7 @@ GLint gltGrabScreenTGA(const char *szFileName)
     tgaHeader.height = iViewport[3];
     tgaHeader.bits = 24;
     tgaHeader.descriptor = 0;
-    
+
     // Do byte swap for big vs little endian
 #ifdef __APPLE__
     LITTLE_ENDIAN_WORD(&tgaHeader.colorMapStart);
@@ -853,7 +853,7 @@ GLint gltGrabScreenTGA(const char *szFileName)
     LITTLE_ENDIAN_WORD(&tgaHeader.width);
     LITTLE_ENDIAN_WORD(&tgaHeader.height);
 #endif
-    
+
     // Attempt to open the file
     pFile = fopen(szFileName, "wb");
     if(pFile == NULL)
@@ -861,17 +861,17 @@ GLint gltGrabScreenTGA(const char *szFileName)
         free(pBits);    // Free buffer and return error
         return 0;
 		}
-	
+
     // Write the header
     fwrite(&tgaHeader, sizeof(TGAHEADER), 1, pFile);
-    
+
     // Write the image data
     fwrite(pBits, lImageSize, 1, pFile);
-	
+
     // Free temporary buffer and close the file
-    free(pBits);    
+    free(pBits);
     fclose(pFile);
-    
+
     // Success!
     return 1;
 	}
@@ -884,7 +884,7 @@ GLint gltGrabScreenTGA(const char *szFileName)
 // Call free() on buffer when finished!
 // This only works on pretty vanilla targas... 8, 24, or 32 bit color
 // only, no palettes, no RLE encoding.
-// This function also takes an optional final parameter to preallocated 
+// This function also takes an optional final parameter to preallocated
 // storage for loading in the image data.
 GLbyte *gltReadTGABits(const char *szFileName, GLint *iWidth, GLint *iHeight, GLint *iComponents, GLenum *eFormat, GLbyte *pData)
 	{
@@ -893,21 +893,21 @@ GLbyte *gltReadTGABits(const char *szFileName, GLint *iWidth, GLint *iHeight, GL
     unsigned long lImageSize;		// Size in bytes of image
     short sDepth;			// Pixel depth;
     GLbyte	*pBits = NULL;          // Pointer to bits
-    
+
     // Default/Failed values
     *iWidth = 0;
     *iHeight = 0;
     *eFormat = GL_RGB;
     *iComponents = GL_RGB;
-    
+
     // Attempt to open the file
     pFile = fopen(szFileName, "rb");
     if(pFile == NULL)
         return NULL;
-	
+
     // Read in header (binary)
     fread(&tgaHeader, 18/* sizeof(TGAHEADER)*/, 1, pFile);
-    
+
     // Do byte swap for big vs little endian
 #ifdef __APPLE__
     LITTLE_ENDIAN_WORD(&tgaHeader.colorMapStart);
@@ -917,29 +917,29 @@ GLbyte *gltReadTGABits(const char *szFileName, GLint *iWidth, GLint *iHeight, GL
     LITTLE_ENDIAN_WORD(&tgaHeader.width);
     LITTLE_ENDIAN_WORD(&tgaHeader.height);
 #endif
-	
-	
+
+
     // Get width, height, and depth of texture
     *iWidth = tgaHeader.width;
     *iHeight = tgaHeader.height;
     sDepth = tgaHeader.bits / 8;
-    
+
     // Put some validity checks here. Very simply, I only understand
     // or care about 8, 24, or 32 bit targa's.
     if(tgaHeader.bits != 8 && tgaHeader.bits != 24 && tgaHeader.bits != 32)
         return NULL;
-	
+
     // Calculate size of image buffer
     lImageSize = tgaHeader.width * tgaHeader.height * sDepth;
-    
+
     // Allocate memory and check for success
-    if(pData == NULL) 
+    if(pData == NULL)
         pBits = (GLbyte*)malloc(lImageSize * sizeof(GLbyte));
-    else 
-        pBits = pData; 
+    else
+        pBits = pData;
 
     // Read in the bits
-    // Check for read error. This should catch RLE or other 
+    // Check for read error. This should catch RLE or other
     // weird formats that I don't want to recognize
     if(fread(pBits, lImageSize, 1, pFile) != 1)
 		{
@@ -947,7 +947,7 @@ GLbyte *gltReadTGABits(const char *szFileName, GLint *iWidth, GLint *iHeight, GL
             free(pBits);
         return NULL;
 		}
-    
+
     // Set OpenGL format expected
     switch(sDepth)
 		{
@@ -966,7 +966,7 @@ GLbyte *gltReadTGABits(const char *szFileName, GLint *iWidth, GLint *iHeight, GL
             *iComponents = GL_LUMINANCE;
             break;
         default:        // RGB
-            // If on the iPhone, TGA's are BGR, and the iPhone does not 
+            // If on the iPhone, TGA's are BGR, and the iPhone does not
             // support BGR without alpha, but it does support RGB,
             // so a simple swizzle of the red and blue bytes will suffice.
             // For faster iPhone loads however, save your TGA's with an Alpha!
@@ -980,10 +980,10 @@ GLbyte *gltReadTGABits(const char *szFileName, GLint *iWidth, GLint *iHeight, GL
 #endif
         break;
 		}
-	
+
     // Done with File
     fclose(pFile);
-	
+
     // Return pointer to image data
     return pBits;
 	}
@@ -994,10 +994,10 @@ GLbyte *gltReadTGABits(const char *szFileName, GLint *iWidth, GLint *iHeight, GL
 // as a texture. The width and height of the bitmap are returned in nWidth and
 // nHeight. The memory block allocated and returned must be deleted with free();
 // The returned array is an 888 BGR texture
-// These structures match the layout of the equivalent Windows specific structs 
+// These structures match the layout of the equivalent Windows specific structs
 // used by Win32
 #pragma pack(1)
-struct RGB { 
+struct RGB {
   GLbyte blue;
   GLbyte green;
   GLbyte red;
@@ -1019,12 +1019,12 @@ struct BMPInfoHeader {
 };
 
 struct BMPHeader {
-  GLushort	type; 
-  GLuint	size; 
-  GLushort	unused; 
-  GLushort	unused2; 
-  GLuint	offset; 
-}; 
+  GLushort	type;
+  GLuint	size;
+  GLushort	unused;
+  GLushort	unused2;
+  GLuint	offset;
+};
 
 struct BMPInfo {
   BMPInfoHeader		header;
@@ -1057,7 +1057,7 @@ GLbyte* gltReadBMPBits(const char *szFileName, int *nWidth, int *nHeight)
 		{
 		free(pBitmapInfo);
 		fclose(pFile);
-		return false;
+		return NULL;
 		}
 
 	// Save the size and dimensions of the bitmap
@@ -1065,11 +1065,11 @@ GLbyte* gltReadBMPBits(const char *szFileName, int *nWidth, int *nHeight)
 	*nHeight = pBitmapInfo->header.height;
 	lBitSize = pBitmapInfo->header.imageSize;
 
-	// If the size isn't specified, calculate it anyway	
+	// If the size isn't specified, calculate it anyway
 	if(pBitmapInfo->header.bits != 24)
 		{
 		free(pBitmapInfo);
-		return false;
+		return NULL;
 		}
 
 	if(lBitSize == 0)
@@ -1123,7 +1123,7 @@ bool gltLoadShaderFile(const char *szFile, GLuint shader)
 	{
     GLint shaderLength = 0;
     FILE *fp;
-	
+
     // Open the shader file
     fp = fopen(szFile, "r");
     if(fp != NULL)
@@ -1131,7 +1131,7 @@ bool gltLoadShaderFile(const char *szFile, GLuint shader)
         // See how long the file is
         while (fgetc(fp) != EOF)
             shaderLength++;
-		
+
         // Allocate a block of memory to send in the shader
         assert(shaderLength < MAX_SHADER_LENGTH);   // make me bigger!
         if(shaderLength > MAX_SHADER_LENGTH)
@@ -1139,26 +1139,26 @@ bool gltLoadShaderFile(const char *szFile, GLuint shader)
             fclose(fp);
             return false;
 			}
-		
+
         // Go back to beginning of file
         rewind(fp);
-		
+
         // Read the whole file in
         if (shaderText != NULL)
             fread(shaderText, 1, shaderLength, fp);
-		
+
         // Make sure it is null terminated and close the file
         shaderText[shaderLength] = '\0';
         fclose(fp);
 		}
     else
-        return false;    
-	
+        return false;
+
     // Load the string
     gltLoadShaderSrc((const char *)shaderText, shader);
-    
+
     return true;
-	}   
+	}
 
 /////////////////////////////////////////////////////////////////
 // Load a pair of shaders, compile, and link together. Specify the complete
@@ -1239,7 +1239,7 @@ GLuint gltLoadShaderTripletWithAttributes(const char *szVertexShader,
     }
     va_end(attributeList);
 
-    // Attempt to link    
+    // Attempt to link
     glLinkProgram(hReturn);
 
     // These are no longer needed
@@ -1278,14 +1278,14 @@ GLuint gltLoadShaderPairWithAttributes(const char *szVertexProg, const char *szF
 	{
     // Temporary Shader objects
     GLuint hVertexShader;
-    GLuint hFragmentShader; 
-    GLuint hReturn = 0;   
+    GLuint hFragmentShader;
+    GLuint hReturn = 0;
     GLint testVal;
-	
+
     // Create shader objects
     hVertexShader = glCreateShader(GL_VERTEX_SHADER);
     hFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	
+
     // Load them. If fail clean up and return null
     // Vertex Program
     if(gltLoadShaderFile(szVertexProg, hVertexShader) == false)
@@ -1295,7 +1295,7 @@ GLuint gltLoadShaderPairWithAttributes(const char *szVertexProg, const char *szF
 		fprintf(stderr, "The shader at %s could ot be found.\n", szVertexProg);
         return (GLuint)NULL;
 		}
-	
+
     // Fragment Program
     if(gltLoadShaderFile(szFragmentProg, hFragmentShader) == false)
 		{
@@ -1304,11 +1304,11 @@ GLuint gltLoadShaderPairWithAttributes(const char *szVertexProg, const char *szF
 		fprintf(stderr,"The shader at %s  could not be found.\n", szFragmentProg);
         return (GLuint)NULL;
 		}
-    
+
     // Compile them both
     glCompileShader(hVertexShader);
     glCompileShader(hFragmentShader);
-    
+
     // Check for errors in vertex shader
     glGetShaderiv(hVertexShader, GL_COMPILE_STATUS, &testVal);
     if(testVal == GL_FALSE)
@@ -1320,7 +1320,7 @@ GLuint gltLoadShaderPairWithAttributes(const char *szVertexProg, const char *szF
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
 		}
-    
+
     // Check for errors in fragment shader
     glGetShaderiv(hFragmentShader, GL_COMPILE_STATUS, &testVal);
     if(testVal == GL_FALSE)
@@ -1332,7 +1332,7 @@ GLuint gltLoadShaderPairWithAttributes(const char *szVertexProg, const char *szF
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
 		}
-    
+
     // Create the final program object, and attach the shaders
     hReturn = glCreateProgram();
     glAttachShader(hReturn, hVertexShader);
@@ -1355,13 +1355,13 @@ GLuint gltLoadShaderPairWithAttributes(const char *szVertexProg, const char *szF
 		}
 	va_end(attributeList);
 
-    // Attempt to link    
+    // Attempt to link
     glLinkProgram(hReturn);
-	
+
     // These are no longer needed
     glDeleteShader(hVertexShader);
-    glDeleteShader(hFragmentShader);  
-    
+    glDeleteShader(hFragmentShader);
+
     // Make sure link worked too
     glGetProgramiv(hReturn, GL_LINK_STATUS, &testVal);
     if(testVal == GL_FALSE)
@@ -1373,10 +1373,10 @@ GLuint gltLoadShaderPairWithAttributes(const char *szVertexProg, const char *szF
 		glDeleteProgram(hReturn);
 		return (GLuint)NULL;
 		}
-    
+
     // All done, return our ready to use shader program
-    return hReturn;  
-	}   
+    return hReturn;
+	}
 
 /////////////////////////////////////////////////////////////////
 // Load a pair of shaders, compile, and link together. Specify the complete
@@ -1386,14 +1386,14 @@ GLuint gltLoadShaderPair(const char *szVertexProg, const char *szFragmentProg)
 	{
     // Temporary Shader objects
     GLuint hVertexShader;
-    GLuint hFragmentShader; 
-    GLuint hReturn = 0;   
+    GLuint hFragmentShader;
+    GLuint hReturn = 0;
     GLint testVal;
-	
+
     // Create shader objects
     hVertexShader = glCreateShader(GL_VERTEX_SHADER);
     hFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	
+
     // Load them. If fail clean up and return null
     if(gltLoadShaderFile(szVertexProg, hVertexShader) == false)
 		{
@@ -1401,18 +1401,18 @@ GLuint gltLoadShaderPair(const char *szVertexProg, const char *szFragmentProg)
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
 		}
-	
+
     if(gltLoadShaderFile(szFragmentProg, hFragmentShader) == false)
 		{
         glDeleteShader(hVertexShader);
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
 		}
-    
+
     // Compile them
     glCompileShader(hVertexShader);
     glCompileShader(hFragmentShader);
-    
+
     // Check for errors
     glGetShaderiv(hVertexShader, GL_COMPILE_STATUS, &testVal);
     if(testVal == GL_FALSE)
@@ -1421,7 +1421,7 @@ GLuint gltLoadShaderPair(const char *szVertexProg, const char *szFragmentProg)
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
 		}
-    
+
     glGetShaderiv(hFragmentShader, GL_COMPILE_STATUS, &testVal);
     if(testVal == GL_FALSE)
 		{
@@ -1429,18 +1429,18 @@ GLuint gltLoadShaderPair(const char *szVertexProg, const char *szFragmentProg)
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
 		}
-    
+
     // Link them - assuming it works...
     hReturn = glCreateProgram();
     glAttachShader(hReturn, hVertexShader);
     glAttachShader(hReturn, hFragmentShader);
 
     glLinkProgram(hReturn);
-	
+
     // These are no longer needed
     glDeleteShader(hVertexShader);
-    glDeleteShader(hFragmentShader);  
-    
+    glDeleteShader(hFragmentShader);
+
     // Make sure link worked too
     glGetProgramiv(hReturn, GL_LINK_STATUS, &testVal);
     if(testVal == GL_FALSE)
@@ -1448,9 +1448,9 @@ GLuint gltLoadShaderPair(const char *szVertexProg, const char *szFragmentProg)
 		glDeleteProgram(hReturn);
 		return (GLuint)NULL;
 		}
-    
-    return hReturn;  
-	}   
+
+    return hReturn;
+	}
 
 /////////////////////////////////////////////////////////////////
 // Load a set of shaders, compile, and link together. Specify the complete
@@ -1465,9 +1465,9 @@ GLuint gltLoadShaderTripletSrc(const char *szVertexSrc,
     GLuint hVertexShader = 0;
     GLuint hGeometryShader = 0;
     GLuint hFragmentShader = 0;
-    GLuint hReturn = 0;   
+    GLuint hReturn = 0;
     GLint testVal;
-	
+
     // Create shader objects, load and compile them
     hVertexShader = glCreateShader(GL_VERTEX_SHADER);
     gltLoadShaderSrc(szVertexSrc, hVertexShader);
@@ -1539,22 +1539,22 @@ GLuint gltLoadShaderPairSrc(const char *szVertexSrc, const char *szFragmentSrc)
 	{
     // Temporary Shader objects
     GLuint hVertexShader;
-    GLuint hFragmentShader; 
-    GLuint hReturn = 0;   
+    GLuint hFragmentShader;
+    GLuint hReturn = 0;
     GLint testVal;
-	
+
     // Create shader objects
     hVertexShader = glCreateShader(GL_VERTEX_SHADER);
     hFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	
-    // Load them. 
+
+    // Load them.
     gltLoadShaderSrc(szVertexSrc, hVertexShader);
     gltLoadShaderSrc(szFragmentSrc, hFragmentShader);
-   
+
     // Compile them
     glCompileShader(hVertexShader);
     glCompileShader(hFragmentShader);
-    
+
     // Check for errors
     glGetShaderiv(hVertexShader, GL_COMPILE_STATUS, &testVal);
     if(testVal == GL_FALSE)
@@ -1563,7 +1563,7 @@ GLuint gltLoadShaderPairSrc(const char *szVertexSrc, const char *szFragmentSrc)
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
 		}
-    
+
     glGetShaderiv(hFragmentShader, GL_COMPILE_STATUS, &testVal);
     if(testVal == GL_FALSE)
 		{
@@ -1571,17 +1571,17 @@ GLuint gltLoadShaderPairSrc(const char *szVertexSrc, const char *szFragmentSrc)
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
 		}
-    
+
     // Link them - assuming it works...
     hReturn = glCreateProgram();
     glAttachShader(hReturn, hVertexShader);
     glAttachShader(hReturn, hFragmentShader);
     glLinkProgram(hReturn);
-	
+
     // These are no longer needed
     glDeleteShader(hVertexShader);
-    glDeleteShader(hFragmentShader);  
-    
+    glDeleteShader(hFragmentShader);
+
     // Make sure link worked too
     glGetProgramiv(hReturn, GL_LINK_STATUS, &testVal);
     if(testVal == GL_FALSE)
@@ -1589,9 +1589,9 @@ GLuint gltLoadShaderPairSrc(const char *szVertexSrc, const char *szFragmentSrc)
 		glDeleteProgram(hReturn);
 		return (GLuint)NULL;
 		}
-    
-    return hReturn;  
-	}   
+
+    return hReturn;
+	}
 
 /////////////////////////////////////////////////////////////////
 // Load a pair of shaders, compile, and link together. Specify the complete
@@ -1601,22 +1601,22 @@ GLuint gltLoadShaderPairSrcWithAttributes(const char *szVertexSrc, const char *s
 	{
     // Temporary Shader objects
     GLuint hVertexShader;
-    GLuint hFragmentShader; 
-    GLuint hReturn = 0;   
+    GLuint hFragmentShader;
+    GLuint hReturn = 0;
     GLint testVal;
-	
+
     // Create shader objects
     hVertexShader = glCreateShader(GL_VERTEX_SHADER);
     hFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	
-    // Load them. 
+
+    // Load them.
     gltLoadShaderSrc(szVertexSrc, hVertexShader);
     gltLoadShaderSrc(szFragmentSrc, hFragmentShader);
-   
+
     // Compile them
     glCompileShader(hVertexShader);
     glCompileShader(hFragmentShader);
-    
+
     // Check for errors
     glGetShaderiv(hVertexShader, GL_COMPILE_STATUS, &testVal);
     if(testVal == GL_FALSE)
@@ -1625,7 +1625,7 @@ GLuint gltLoadShaderPairSrcWithAttributes(const char *szVertexSrc, const char *s
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
 		}
-    
+
     glGetShaderiv(hFragmentShader, GL_COMPILE_STATUS, &testVal);
     if(testVal == GL_FALSE)
 		{
@@ -1633,7 +1633,7 @@ GLuint gltLoadShaderPairSrcWithAttributes(const char *szVertexSrc, const char *s
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
 		}
-    
+
     // Link them - assuming it works...
     hReturn = glCreateProgram();
     glAttachShader(hReturn, hVertexShader);
@@ -1655,11 +1655,11 @@ GLuint gltLoadShaderPairSrcWithAttributes(const char *szVertexSrc, const char *s
 
 
     glLinkProgram(hReturn);
-	
+
     // These are no longer needed
     glDeleteShader(hVertexShader);
-    glDeleteShader(hFragmentShader);  
-    
+    glDeleteShader(hFragmentShader);
+
     // Make sure link worked too
     glGetProgramiv(hReturn, GL_LINK_STATUS, &testVal);
     if(testVal == GL_FALSE)
@@ -1667,9 +1667,9 @@ GLuint gltLoadShaderPairSrcWithAttributes(const char *szVertexSrc, const char *s
 		glDeleteProgram(hReturn);
 		return (GLuint)NULL;
 		}
-    
-    return hReturn;  
-	}   
+
+    return hReturn;
+	}
 
 
 
@@ -1681,7 +1681,7 @@ bool gltCheckErrors(GLuint progName)
 {
     bool bFoundError = false;
 	GLenum error = glGetError();
-		
+
 	if (error != GL_NO_ERROR)
 	{
 	    fprintf(stderr, "A GL Error has occured\n");
@@ -1723,13 +1723,13 @@ bool gltCheckErrors(GLuint progName)
             fprintf(stderr, "GL_FRAMEBUFFER_UNSUPPORTED\n");
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-			// Make sure the number of samples for each 
-			// attachment is the same 
+			// Make sure the number of samples for each
+			// attachment is the same
             fprintf(stderr, "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE\n");
-			break; 
+			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-			// Make sure the number of layers for each 
-			// attachment is the same 
+			// Make sure the number of layers for each
+			// attachment is the same
             fprintf(stderr, "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS\n");
 			break;
 		}
@@ -1752,16 +1752,16 @@ bool gltCheckErrors(GLuint progName)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-// Create a matrix that maps geometry to the screen. 1 unit in the x directionequals one pixel 
+// Create a matrix that maps geometry to the screen. 1 unit in the x directionequals one pixel
 // of width, same with the y direction.
-void gltGenerateOrtho2DMat(GLuint screenWidth, GLuint screenHeight, 
+void gltGenerateOrtho2DMat(GLuint screenWidth, GLuint screenHeight,
                            M3DMatrix44f &orthoMatrix, GLBatch &screenQuad)
 {
     float right = (float)screenWidth;
 	float left  = 0.0f;
 	float top = (float)screenHeight;
 	float bottom = 0.0f;
-	
+
     // set ortho matrix
 	orthoMatrix[0] = (float)(2 / (right - left));
 	orthoMatrix[1] = 0.0;
@@ -1787,7 +1787,7 @@ void gltGenerateOrtho2DMat(GLuint screenWidth, GLuint screenHeight,
 	screenQuad.Reset();
 	screenQuad.Begin(GL_TRIANGLE_STRIP, 4, 1);
 		screenQuad.Color4f(0.0f, 1.0f, 0.0f, 1.0f);
-		screenQuad.MultiTexCoord2f(0, 0.0f, 0.0f); 
+		screenQuad.MultiTexCoord2f(0, 0.0f, 0.0f);
 		screenQuad.Vertex3f(0.0f, 0.0f, 0.0f);
 
 		screenQuad.Color4f(0.0f, 1.0f, 0.0f, 1.0f);
